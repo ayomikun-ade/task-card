@@ -273,3 +273,90 @@ main {
   background-color: var(--priority-high);
   color: #fff;
 }
+
+/* Page credit */
+.page-credit {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+  .todo-card {
+    padding: 1.25rem;
+    box-shadow: 4px 4px 0px var(--border);
+  }
+
+  .todo-title {
+    font-size: 1.1rem;
+  }
+
+  .todo-description {
+    font-size: 0.875rem;
+  }
+
+  .todo-meta {
+    gap: 0.5rem;
+  }
+
+  .todo-due-date,
+  .todo-time-remaining,
+  .todo-status {
+    font-size: 0.75rem;
+  }
+
+  .todo-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .todo-actions {
+    width: 100%;
+  }
+
+  .todo-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.625rem 0.75rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .todo-card {
+    padding: 1rem;
+  }
+
+  .todo-title-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .todo-priority {
+    align-self: flex-start;
+  }
+
+  .todo-tag {
+    font-size: 0.75rem;
+  }
+
+  .todo-btn {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.5rem;
+  }
+}
