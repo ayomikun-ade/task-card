@@ -50,6 +50,54 @@ Once you've opened the `index.html` file in your browser, you'll see the task ca
 - **Marking Complete**: Click the "Mark complete" checkbox. You'll notice the task title gets a strike-through, and the status changes to "Done". Uncheck it to revert the changes.
 - **Edit and Delete**: The "Edit" and "Delete" buttons are currently set up with dummy actions. Clicking "Edit" will log "edit clicked" to your browser's developer console, and clicking "Delete" will trigger a simple browser alert saying "Delete clicked". You can easily integrate these with your own backend or frontend logic.
 
+## What Changed from Stage 0
+
+Stage 0 delivered a static, read-only card with a single checkbox toggle. Stage 1 expands it into a stateful, interactive component:
+
+- **Inline editing** — Clicking Edit hides the display view and reveals a form pre-populated with current values (title, description, priority, due date). Save applies changes; Cancel discards.
+- **Status control** — A segmented button group (Pending / In Progress / Done) that stays bi-directionally synced with the checkbox and status badge.
+- **Priority indicator** — A colored left border accent on the card that changes with Low (slate) / Medium (blue) / High (red), updated live when edited.
+- **Expand/collapse** — Long descriptions collapse by default with a "Show more" toggle, using `aria-expanded` and `aria-controls`.
+- **Overdue indicator** — A distinct red badge that appears when the due date has passed and the task is not Done.
+- **Granular time-remaining** — Replaced coarse calculations with days / hours / minutes buckets. Updates every 30 seconds (was 60s). When Done, timer freezes and shows "Completed".
+- All 13 original `data-testid` values preserved; 10 new ones added.
+
+## New Design Decisions
+
+- **Hide-and-show edit form (not inline editing)**: Integrated a hidden form reveal which gives each mode a cleaner, isolated container.
+- **Segmented control over dropdown**: A segmented control fits my neobrutalism style approach better — three blocky, color-filled buttons sharing a bordered row — and makes the current status visible without an extra click.
+- **Left border accent for priority indicator**: Chosen over a colored dot or background tint because it creates a strong vertical visual anchor consistent with the card's heavy borders, and remains visible regardless of content length.
+- **Length-based collapse trigger (120 chars)**: The expand toggle stays hidden for short descriptions to avoid unnecessary UI clutter.
+- **Blue-toned palette**: Soft blue card on cool grey-blue background, deep navy borders, red reserved for High priority and overdue states, green for Done. Picked for WCAG AA contrast without the usual neobrutalism bright yellow/pink.
+- **Hard offset shadow + thick borders**: `6px 6px 0 navy` shadow and 3px borders for neobrutalism style — no blur, no glow.
+- **Micro-interactions only**: Button press, tag hover lift, card entrance fade-slide, expand icon rotate, overdue pulse. No decorative motion.
+
+## Known Limitations
+
+- **Cancel has no confirmation**: If the user edits several fields and clicks Cancel, there's no "are you sure?" prompt. Intentional for simplicity.
+- **No persistence**: State is in memory only. Reloading resets the card to its hard-coded initial values.
+- **Single card only**: Scope is one card component, not a list or full todo app.
+- **Checkbox revert goes to Pending, not previous status**: When a Done task is unchecked, status reverts to Pending rather than the prior status like In Progress. Previous status is not tracked.
+- **Due-date uses local timezone**: `datetime-local` input reads/writes the browser's local timezone; stored as UTC ISO on save.
+
+## Accessibility Notes
+
+- **Semantic HTML**: `<article>` card root, `<h2>` title, `<p>` description, `<time datetime="…">` for due-date and time-remaining, `<ul role="list">` with `<li>` tags, real `<input type="checkbox">` with `<label for="…">`, `<button>` (never `<div>`) for all actions.
+- **Form labels**: Every edit-form field has a visible `<label for="…">`.
+- **ARIA**:
+  - Priority / status badges have `aria-label` describing their value (e.g., "Priority: High").
+  - Status segmented control uses `role="radiogroup"` with `aria-label`; each button has `role="radio"` + `aria-checked`.
+  - Expand toggle uses `aria-expanded` + `aria-controls` pointing to the collapsible section's matching `id`.
+  - Time-remaining uses `aria-live="polite"` so screen readers announce updates.
+  - Overdue indicator has `aria-label="Task is overdue"`.
+  - Priority indicator is visual-only → `aria-hidden="true"` (priority badge already conveys the info).
+- **Focus management**:
+  - Visible 3px blue outline on all interactive elements.
+  - Entering edit mode focuses the title input.
+  - Exiting edit mode (Save or Cancel) returns focus to the Edit button.
+- **Keyboard**: Fully keyboard-navigable via Tab. All interactive elements are native focusable elements.
+- **Color contrast**: All text/background combinations meet WCAG AA. Color never communicates alone — text labels accompany priority, status, and overdue indicators.
+
 ## Technologies Used
 
 | Technology | Description                                                                           |
