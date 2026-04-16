@@ -16,95 +16,172 @@
   <body>
     <main>
       <article data-testid="test-todo-card" class="todo-card">
-        <header class="todo-header">
-          <div class="todo-title-row">
-            <h2 data-testid="test-todo-title" class="todo-title">
-              Finalize landing page design
-            </h2>
-            <span
-              data-testid="test-todo-priority"
-              class="todo-priority"
-              aria-label="Priority: High"
+        <!-- Display view -->
+        <div class="todo-view">
+          <header class="todo-header">
+            <div class="todo-title-row">
+              <h2 data-testid="test-todo-title" class="todo-title">
+                Finalize landing page design
+              </h2>
+              <span
+                data-testid="test-todo-priority"
+                class="todo-priority"
+                data-level="high"
+                aria-label="Priority: High"
+              >
+                High
+              </span>
+            </div>
+
+            <p data-testid="test-todo-description" class="todo-description">
+              Review the latest mockups from the design team, gather feedback from
+              stakeholders, and prepare the final version for handoff to
+              development.
+            </p>
+          </header>
+
+          <div class="todo-meta">
+            <time
+              data-testid="test-todo-due-date"
+              class="todo-due-date"
+              datetime="2026-04-16T12:00:00Z"
             >
-              High
+              Due Apr 16, 2026
+            </time>
+
+            <time
+              data-testid="test-todo-time-remaining"
+              class="todo-time-remaining"
+              aria-live="polite"
+            >
+              Calculating...
+            </time>
+
+            <span
+              data-testid="test-todo-status"
+              class="todo-status"
+              aria-label="Status: In Progress"
+            >
+              In Progress
             </span>
           </div>
 
-          <p data-testid="test-todo-description" class="todo-description">
-            Review the latest mockups from the design team, gather feedback from
-            stakeholders, and prepare the final version for handoff to
-            development.
-          </p>
-        </header>
-
-        <div class="todo-meta">
-          <time
-            data-testid="test-todo-due-date"
-            class="todo-due-date"
-            datetime="2026-04-16T12:00:00Z"
+          <ul
+            data-testid="test-todo-tags"
+            class="todo-tags"
+            role="list"
+            aria-label="Task tags"
           >
-            Due Apr 16, 2026
-          </time>
+            <li data-testid="test-todo-tag-work" class="todo-tag">work</li>
+            <li data-testid="test-todo-tag-urgent" class="todo-tag">urgent</li>
+            <li class="todo-tag">design</li>
+          </ul>
 
-          <time
-            data-testid="test-todo-time-remaining"
-            class="todo-time-remaining"
-            aria-live="polite"
-          >
-            Calculating...
-          </time>
+          <footer class="todo-footer">
+            <div class="todo-toggle-group">
+              <input
+                type="checkbox"
+                id="todo-complete"
+                data-testid="test-todo-complete-toggle"
+                class="todo-checkbox"
+                aria-label="Mark task as complete"
+              />
+              <label for="todo-complete" class="todo-checkbox-label">
+                Mark complete
+              </label>
+            </div>
 
-          <span
-            data-testid="test-todo-status"
-            class="todo-status"
-            aria-label="Status: In Progress"
-          >
-            In Progress
-          </span>
+            <div class="todo-actions">
+              <button
+                type="button"
+                data-testid="test-todo-edit-button"
+                class="todo-btn todo-btn-edit"
+                aria-label="Edit task"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                data-testid="test-todo-delete-button"
+                class="todo-btn todo-btn-delete"
+                aria-label="Delete task"
+              >
+                Delete
+              </button>
+            </div>
+          </footer>
         </div>
 
-        <ul
-          data-testid="test-todo-tags"
-          class="todo-tags"
-          role="list"
-          aria-label="Task tags"
+        <!-- Edit view -->
+        <form
+          data-testid="test-todo-edit-form"
+          class="todo-edit-form"
+          aria-label="Edit task"
+          hidden
         >
-          <li data-testid="test-todo-tag-work" class="todo-tag">work</li>
-          <li data-testid="test-todo-tag-urgent" class="todo-tag">urgent</li>
-          <li class="todo-tag">design</li>
-        </ul>
-
-        <footer class="todo-footer">
-          <div class="todo-toggle-group">
+          <div class="todo-edit-field">
+            <label for="edit-title">Title</label>
             <input
-              type="checkbox"
-              id="todo-complete"
-              data-testid="test-todo-complete-toggle"
-              class="todo-checkbox"
-              aria-label="Mark task as complete"
+              type="text"
+              id="edit-title"
+              data-testid="test-todo-edit-title-input"
+              class="todo-edit-input"
+              required
             />
-            <label for="todo-complete" class="todo-checkbox-label">
-              Mark complete
-            </label>
           </div>
 
-          <div class="todo-actions">
+          <div class="todo-edit-field">
+            <label for="edit-description">Description</label>
+            <textarea
+              id="edit-description"
+              data-testid="test-todo-edit-description-input"
+              class="todo-edit-textarea"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="todo-edit-field-row">
+            <div class="todo-edit-field">
+              <label for="edit-priority">Priority</label>
+              <select
+                id="edit-priority"
+                data-testid="test-todo-edit-priority-select"
+                class="todo-edit-select"
+              >
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+
+            <div class="todo-edit-field">
+              <label for="edit-due-date">Due date</label>
+              <input
+                type="datetime-local"
+                id="edit-due-date"
+                data-testid="test-todo-edit-due-date-input"
+                class="todo-edit-input"
+              />
+            </div>
+          </div>
+
+          <div class="todo-edit-actions">
             <button
-              data-testid="test-todo-edit-button"
-              class="todo-btn todo-btn-edit"
-              aria-label="Edit task"
+              type="submit"
+              data-testid="test-todo-save-button"
+              class="todo-btn todo-btn-save"
             >
-              Edit
+              Save
             </button>
             <button
-              data-testid="test-todo-delete-button"
-              class="todo-btn todo-btn-delete"
-              aria-label="Delete task"
+              type="button"
+              data-testid="test-todo-cancel-button"
+              class="todo-btn todo-btn-cancel"
             >
-              Delete
+              Cancel
             </button>
           </div>
-        </footer>
+        </form>
       </article>
     </main>
 

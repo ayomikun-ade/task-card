@@ -1,5 +1,10 @@
+// Elements
 const card = document.querySelector('[data-testid="test-todo-card"]');
 const title = document.querySelector('[data-testid="test-todo-title"]');
+const description = document.querySelector(
+  '[data-testid="test-todo-description"]',
+);
+const priority = document.querySelector('[data-testid="test-todo-priority"]');
 const statusEl = document.querySelector('[data-testid="test-todo-status"]');
 const checkbox = document.querySelector(
   '[data-testid="test-todo-complete-toggle"]',
@@ -13,10 +18,46 @@ const deleteBtn = document.querySelector(
 );
 const dueDate = document.querySelector('[data-testid="test-todo-due-date"]');
 
-// Due date from the datetime attribute
-const dueDateValue = new Date(dueDate.getAttribute("datetime"));
+// Edit form elements
+const editForm = document.querySelector('[data-testid="test-todo-edit-form"]');
+const editTitleInput = document.querySelector(
+  '[data-testid="test-todo-edit-title-input"]',
+);
+const editDescInput = document.querySelector(
+  '[data-testid="test-todo-edit-description-input"]',
+);
+const editPrioritySelect = document.querySelector(
+  '[data-testid="test-todo-edit-priority-select"]',
+);
+const editDueDateInput = document.querySelector(
+  '[data-testid="test-todo-edit-due-date-input"]',
+);
+const saveBtn = document.querySelector('[data-testid="test-todo-save-button"]');
+const cancelBtn = document.querySelector(
+  '[data-testid="test-todo-cancel-button"]',
+);
+
+let dueDateValue = new Date(dueDate.getAttribute("datetime"));
 
 // Time remaining
+function formatDueDate(date) {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  return `Due ${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
+
 function updateTimeRemaining() {
   const now = new Date();
   const diff = dueDateValue - now;
@@ -61,7 +102,7 @@ function updateTimeRemaining() {
 updateTimeRemaining();
 setInterval(updateTimeRemaining, 60000);
 
-// Checkbox toggle
+// --- Checkbox toggle ---
 checkbox.addEventListener("change", () => {
   if (checkbox.checked) {
     title.classList.add("completed");
@@ -76,12 +117,72 @@ checkbox.addEventListener("change", () => {
   }
 });
 
-// Edit button
-editBtn.addEventListener("click", () => {
-  console.log("edit clicked");
+// --- Edit mode ---
+function enterEditMode() {
+  // Populate inputs with current values
+  editTitleInput.value = title.textContent.trim();
+  editDescInput.value = description.textContent.trim();
+  editPrioritySelect.value = priority.textContent.trim();
+
+  // Convert due date to datetime-local format (local time, no seconds)
+  const pad = (n) => String(n).padStart(2, "0");
+  const d = dueDateValue;
+  editDueDateInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  card.classList.add("is-editing");
+  editForm.hidden = false;
+  editTitleInput.focus();
+  editTitleInput.select();
+}
+
+function exitEditMode() {
+  card.classList.remove("is-editing");
+  editForm.hidden = true;
+  editBtn.focus();
+}
+
+editBtn.addEventListener("click", enterEditMode);
+
+cancelBtn.addEventListener("click", exitEditMode);
+
+editForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  // Update title
+  const newTitle = editTitleInput.value.trim();
+  if (newTitle) title.textContent = newTitle;
+
+  // Update description
+  description.textContent = editDescInput.value;
+
+  // Update priority
+  const newPriority = editPrioritySelect.value;
+  priority.textContent = newPriority;
+  priority.setAttribute("aria-label", `Priority: ${newPriority}`);
+  priority.setAttribute("data-level", newPriority.toLowerCase());
+
+  // Update due date
+  const newDueDate = new Date(editDueDateInput.value);
+  if (!isNaN(newDueDate.getTime())) {
+    dueDateValue = newDueDate;
+    dueDate.setAttribute("datetime", newDueDate.toISOString());
+    dueDate.textContent = formatDueDate(newDueDate);
+    updateTimeRemaining();
+  }
+
+  exitEditMode();
 });
 
 // Delete button
 deleteBtn.addEventListener("click", () => {
   alert("Delete clicked");
+});
+
+// Card entrance animation
+card.style.opacity = "0";
+card.style.transform = "translateY(12px)";
+requestAnimationFrame(() => {
+  card.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+  card.style.opacity = "1";
+  card.style.transform = "translateY(0)";
 });
