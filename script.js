@@ -150,6 +150,43 @@ statusButtons.forEach((btn) => {
   });
 });
 
+// --- Expand / collapse description ---
+const expandToggle = document.querySelector(
+  '[data-testid="test-todo-expand-toggle"]',
+);
+const collapsible = document.querySelector(
+  '[data-testid="test-todo-collapsible-section"]',
+);
+const expandLabel = expandToggle.querySelector(".todo-expand-label");
+
+const DESCRIPTION_LENGTH_THRESHOLD = 120;
+
+function updateExpandToggleVisibility() {
+  const length = description.textContent.trim().length;
+  const shouldShow = length > DESCRIPTION_LENGTH_THRESHOLD;
+  expandToggle.hidden = !shouldShow;
+
+  // If description is now short enough, ensure it's expanded/visible
+  if (!shouldShow) {
+    collapsible.classList.add("is-expanded");
+    expandToggle.setAttribute("aria-expanded", "true");
+  }
+}
+
+function setExpanded(expanded) {
+  collapsible.classList.toggle("is-expanded", expanded);
+  expandToggle.setAttribute("aria-expanded", String(expanded));
+  expandLabel.textContent = expanded ? "Show less" : "Show more";
+}
+
+expandToggle.addEventListener("click", () => {
+  const expanded = expandToggle.getAttribute("aria-expanded") === "true";
+  setExpanded(!expanded);
+});
+
+// Initial state: collapsed by default if long
+updateExpandToggleVisibility();
+
 // Edit mode
 function enterEditMode() {
   editTitleInput.value = title.textContent.trim();
@@ -186,12 +223,14 @@ editForm.addEventListener("submit", (e) => {
 
   // Update description
   description.textContent = editDescInput.value;
+  updateExpandToggleVisibility();
 
   // Update priority
   const newPriority = editPrioritySelect.value;
   priority.textContent = newPriority;
   priority.setAttribute("aria-label", `Priority: ${newPriority}`);
   priority.setAttribute("data-level", newPriority.toLowerCase());
+  card.setAttribute("data-priority", newPriority.toLowerCase());
 
   // Update due date
   const newDueDate = new Date(editDueDateInput.value);

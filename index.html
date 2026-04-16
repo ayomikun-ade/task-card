@@ -15,7 +15,17 @@
   </head>
   <body>
     <main>
-      <article data-testid="test-todo-card" class="todo-card">
+      <article
+        data-testid="test-todo-card"
+        class="todo-card"
+        data-priority="high"
+      >
+        <span
+          data-testid="test-todo-priority-indicator"
+          class="todo-priority-indicator"
+          aria-hidden="true"
+        ></span>
+
         <!-- Display view -->
         <div class="todo-view">
           <header class="todo-header">
@@ -33,11 +43,29 @@
               </span>
             </div>
 
-            <p data-testid="test-todo-description" class="todo-description">
-              Review the latest mockups from the design team, gather feedback from
-              stakeholders, and prepare the final version for handoff to
-              development.
-            </p>
+            <div
+              data-testid="test-todo-collapsible-section"
+              id="todo-description-section"
+              class="todo-collapsible"
+            >
+              <p data-testid="test-todo-description" class="todo-description">
+                Review the latest mockups from the design team, gather feedback
+                from stakeholders, and prepare the final version for handoff to
+                development. Make sure every breakpoint renders correctly, all
+                interactive states are covered, and the motion specs are
+                documented for the engineering handoff meeting on Friday.
+              </p>
+            </div>
+            <button
+              type="button"
+              data-testid="test-todo-expand-toggle"
+              class="todo-expand-toggle"
+              aria-expanded="false"
+              aria-controls="todo-description-section"
+            >
+              <span class="todo-expand-label">Show more</span>
+              <span class="todo-expand-icon" aria-hidden="true">+</span>
+            </button>
           </header>
 
           <div class="todo-meta">
