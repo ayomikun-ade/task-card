@@ -60,6 +60,7 @@
             <span
               data-testid="test-todo-status"
               class="todo-status"
+              data-status="in-progress"
               aria-label="Status: In Progress"
             >
               In Progress
@@ -77,20 +78,55 @@
             <li class="todo-tag">design</li>
           </ul>
 
-          <footer class="todo-footer">
-            <div class="todo-toggle-group">
-              <input
-                type="checkbox"
-                id="todo-complete"
-                data-testid="test-todo-complete-toggle"
-                class="todo-checkbox"
-                aria-label="Mark task as complete"
-              />
-              <label for="todo-complete" class="todo-checkbox-label">
-                Mark complete
-              </label>
-            </div>
+          <div class="todo-toggle-group">
+            <input
+              type="checkbox"
+              id="todo-complete"
+              data-testid="test-todo-complete-toggle"
+              class="todo-checkbox"
+              aria-label="Mark task as complete"
+            />
+            <label for="todo-complete" class="todo-checkbox-label">
+              Mark complete
+            </label>
+          </div>
 
+          <div
+            data-testid="test-todo-status-control"
+            class="todo-status-control"
+            role="radiogroup"
+            aria-label="Change task status"
+          >
+            <button
+              type="button"
+              class="todo-status-btn"
+              data-status="pending"
+              role="radio"
+              aria-checked="false"
+            >
+              Pending
+            </button>
+            <button
+              type="button"
+              class="todo-status-btn is-active"
+              data-status="in-progress"
+              role="radio"
+              aria-checked="true"
+            >
+              In Progress
+            </button>
+            <button
+              type="button"
+              class="todo-status-btn"
+              data-status="done"
+              role="radio"
+              aria-checked="false"
+            >
+              Done
+            </button>
+          </div>
+
+          <footer class="todo-footer">
             <div class="todo-actions">
               <button
                 type="button"

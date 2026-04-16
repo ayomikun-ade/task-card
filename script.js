@@ -102,24 +102,56 @@ function updateTimeRemaining() {
 updateTimeRemaining();
 setInterval(updateTimeRemaining, 60000);
 
-// --- Checkbox toggle ---
+// Status sync
+const statusControl = document.querySelector(
+  '[data-testid="test-todo-status-control"]',
+);
+const statusButtons = statusControl.querySelectorAll(".todo-status-btn");
+
+const STATUS_LABELS = {
+  pending: "Pending",
+  "in-progress": "In Progress",
+  done: "Done",
+};
+
+function setStatus(newStatus) {
+  const label = STATUS_LABELS[newStatus];
+
+  // Update status display badge
+  statusEl.textContent = label;
+  statusEl.setAttribute("data-status", newStatus);
+  statusEl.setAttribute("aria-label", `Status: ${label}`);
+
+  // Update status control active state
+  statusButtons.forEach((btn) => {
+    const isActive = btn.dataset.status === newStatus;
+    btn.classList.toggle("is-active", isActive);
+    btn.setAttribute("aria-checked", String(isActive));
+  });
+
+  // Update checkbox
+  checkbox.checked = newStatus === "done";
+
+  card.classList.toggle("is-done", newStatus === "done");
+}
+
 checkbox.addEventListener("change", () => {
   if (checkbox.checked) {
-    title.classList.add("completed");
-    statusEl.textContent = "Done";
-    statusEl.setAttribute("aria-label", "Status: Done");
-    statusEl.classList.add("done");
+    setStatus("done");
   } else {
-    title.classList.remove("completed");
-    statusEl.textContent = "In Progress";
-    statusEl.setAttribute("aria-label", "Status: In Progress");
-    statusEl.classList.remove("done");
+    setStatus("pending");
   }
 });
 
-// --- Edit mode ---
+// Status control → checkbox + display
+statusButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    setStatus(btn.dataset.status);
+  });
+});
+
+// Edit mode
 function enterEditMode() {
-  // Populate inputs with current values
   editTitleInput.value = title.textContent.trim();
   editDescInput.value = description.textContent.trim();
   editPrioritySelect.value = priority.textContent.trim();
