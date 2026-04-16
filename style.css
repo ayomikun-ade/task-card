@@ -203,6 +203,37 @@ main {
   background-color: var(--priority-high);
 }
 
+.todo-time-remaining.completed {
+  background-color: var(--status-done);
+}
+
+/* Overdue indicator */
+.todo-overdue-indicator {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.625rem;
+  border: 2px solid var(--border);
+  background-color: var(--priority-high);
+  color: #fff;
+  animation: overdue-pulse 2s ease-in-out infinite;
+}
+
+.todo-overdue-indicator[hidden] {
+  display: none;
+}
+
+@keyframes overdue-pulse {
+  0%, 100% {
+    background-color: var(--priority-high);
+  }
+  50% {
+    background-color: #991b1b;
+  }
+}
+
 .todo-status {
   background-color: var(--status-progress);
   color: #fff;

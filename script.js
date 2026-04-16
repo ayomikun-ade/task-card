@@ -12,6 +12,9 @@ const checkbox = document.querySelector(
 const timeRemaining = document.querySelector(
   '[data-testid="test-todo-time-remaining"]',
 );
+const overdueIndicator = document.querySelector(
+  '[data-testid="test-todo-overdue-indicator"]',
+);
 const editBtn = document.querySelector('[data-testid="test-todo-edit-button"]');
 const deleteBtn = document.querySelector(
   '[data-testid="test-todo-delete-button"]',
@@ -58,7 +61,20 @@ function formatDueDate(date) {
   return `Due ${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
+let currentStatus = "in-progress";
+
 function updateTimeRemaining() {
+  // When task is Done, freeze and show "Completed"
+  if (currentStatus === "done") {
+    timeRemaining.textContent = "Completed";
+    timeRemaining.classList.remove("overdue");
+    timeRemaining.classList.add("completed");
+    overdueIndicator.hidden = true;
+    return;
+  }
+
+  timeRemaining.classList.remove("completed");
+
   const now = new Date();
   const diff = dueDateValue - now;
   const absDiff = Math.abs(diff);
@@ -68,13 +84,14 @@ function updateTimeRemaining() {
   const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
 
   let text;
+  const isOverdue = diff < 0 && absDiff >= 1000 * 60;
 
-  if (Math.abs(diff) < 1000 * 60) {
+  if (absDiff < 1000 * 60) {
     text = "Due now!";
   } else if (diff > 0) {
     if (days >= 2) {
       text = `Due in ${days} days`;
-    } else if (hours >= 24) {
+    } else if (days >= 1) {
       text = "Due tomorrow";
     } else if (hours >= 1) {
       text = `Due in ${hours} hour${hours > 1 ? "s" : ""}`;
@@ -84,23 +101,22 @@ function updateTimeRemaining() {
   } else {
     if (days >= 2) {
       text = `Overdue by ${days} days`;
+    } else if (days >= 1) {
+      text = "Overdue by 1 day";
     } else if (hours >= 1) {
       text = `Overdue by ${hours} hour${hours > 1 ? "s" : ""}`;
     } else {
       text = `Overdue by ${minutes} minute${minutes > 1 ? "s" : ""}`;
     }
-    timeRemaining.classList.add("overdue");
-  }
-
-  if (diff > 0) {
-    timeRemaining.classList.remove("overdue");
   }
 
   timeRemaining.textContent = text;
+  timeRemaining.classList.toggle("overdue", isOverdue);
+  overdueIndicator.hidden = !isOverdue;
 }
 
 updateTimeRemaining();
-setInterval(updateTimeRemaining, 60000);
+setInterval(updateTimeRemaining, 30000);
 
 // Status sync
 const statusControl = document.querySelector(
@@ -116,6 +132,7 @@ const STATUS_LABELS = {
 
 function setStatus(newStatus) {
   const label = STATUS_LABELS[newStatus];
+  currentStatus = newStatus;
 
   // Update status display badge
   statusEl.textContent = label;
@@ -133,6 +150,9 @@ function setStatus(newStatus) {
   checkbox.checked = newStatus === "done";
 
   card.classList.toggle("is-done", newStatus === "done");
+
+  // Refresh time display (Done → "Completed", otherwise recalculate)
+  updateTimeRemaining();
 }
 
 checkbox.addEventListener("change", () => {
